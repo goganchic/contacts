@@ -8,7 +8,7 @@ class Contacts
     PROTOCOL_ERROR      = "Livejournal.com has changed its protocols, please upgrade this library first."
     
     def real_connect
-      postdata = "user=#{CGI.escape(login.split('@')[0].to_s)}&password=#{CGI.escape(password.to_s)}"
+      postdata = "user=#{CGI.escape(login.to_s)}&password=#{CGI.escape(password.to_s)}"
       
       data, resp, cookies, forward = post(LOGIN_URL, postdata)
       old_url = LOGIN_URL
