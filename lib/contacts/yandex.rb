@@ -1,4 +1,3 @@
-require 'contacts'
 require 'csv'
 require 'iconv'
 

@@ -1,4 +1,3 @@
-require 'contacts'
 require 'hpricot'
 
 class Contacts
