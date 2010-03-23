@@ -12,16 +12,17 @@ class Contacts
       postdata = "Domain=#{CGI.escape(login.split('@')[1].to_s)}&Login=#{CGI.escape(login.split('@')[0].to_s)}&Password=#{CGI.escape(password.to_s)}"
       
       data, resp, cookies, forward = post(LOGIN_URL, postdata)
-      data = Iconv.iconv("UTF8", "CP1251", data)[0]
+      old_url = LOGIN_URL
+      until forward.nil?
+        data, resp, cookies, forward, old_url = get(forward, cookies, old_url) + [forward]
+      end
+      data = Iconv.iconv("UTF-8", "WINDOWS-1251", data)[0]
       
       if data.index("Неверное имя пользователя или пароль") || data.index("Недопустимое имя пользователя")
         raise AuthenticationError, "Username and password do not match"
       elsif cookies == ""
         raise ConnectionError, PROTOCOL_ERROR
       end
-      
-      data, resp, cookies, forward = get(forward, cookies, LOGIN_URL)
-      data, resp, cookies, forward = get(forward, cookies, LOGIN_URL)
       
       if resp.code_type != Net::HTTPOK
         raise ConnectionError, PROTOCOL_ERROR
@@ -45,7 +46,7 @@ class Contacts
           if resp.code_type != Net::HTTPOK
             raise ConnectionError, self.class.const_get(:PROTOCOL_ERROR)
           end
-          data = Iconv.iconv("UTF8", "CP1251", data)[0]
+          data = Iconv.iconv("UTF-8", "WINDOWS-1251", data)[0]
           doc = Hpricot(data)
           tables = data.gsub(/\n/, "").gsub(/\r/, "").gsub(/<script(.*?)<\/script>/, "").scan(/<table.*?<\/table>/m)
           table_id = 1

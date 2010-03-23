@@ -16,7 +16,7 @@ class Contacts
       until forward.nil?
         data, resp, cookies, forward, old_url = get(forward, cookies, old_url) + [forward]
       end
-      # data = Iconv.iconv("UTF8", "CP1251", data)[0]
+      
       if data.index("Неправильная пара логин-пароль!")
         raise AuthenticationError, "Username and password do not match"
       elsif cookies == ""
