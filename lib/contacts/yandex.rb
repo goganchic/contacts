@@ -9,7 +9,6 @@ class Contacts
     PROTOCOL_ERROR      = "Yandex has changed its protocols, please upgrade this library first."
     
     def real_connect
-      debugger
       postdata = "timestamp=&twoweeks=yes&login=#{CGI.escape(login)}&passwd=#{CGI.escape(password)}"
       
       data, resp, cookies, forward = post(LOGIN_URL, postdata)
