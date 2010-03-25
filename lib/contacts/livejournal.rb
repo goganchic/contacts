@@ -1,4 +1,5 @@
 require 'hpricot'
+require 'mechanize'
 
 class Contacts
   class Livejournal < Base
@@ -43,6 +44,30 @@ class Contacts
           @contacts << [user, "#{user}@livejournal.com"]
         end
         @contacts
+      end
+    end
+    
+    def send_message(user, subject, text)
+      begin
+        agent = Mechanize.new
+      
+        page = agent.get "http://livejournal.com"
+        login_form          = page.forms[2]
+        login_form.user     = login.split('@')[0].to_s
+        login_form.password = password.to_s
+
+        page = agent.submit(login_form)
+
+        page = agent.get "http://www.livejournal.com/inbox/compose.bml?user=#{user[0].to_s}"
+                
+        msg_form             = page.forms[1]
+        msg_form.msg_subject = subject.to_s
+        msg_form.msg_body    = text.to_s
+
+        page = agent.submit(msg_form)
+        return true
+      rescue
+        raise ConnectionError, PROTOCOL_ERROR
       end
     end
     
