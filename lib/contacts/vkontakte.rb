@@ -9,26 +9,24 @@ class Contacts
     PROTOCOL_ERROR      = "Vkontakte.ru has changed its protocols, please upgrade this library first."
     
     def real_connect
-      #
-    end
-    
-    def contacts
-      return @contacts if @contacts
-      @contacts = []
-      
-      agent = Mechanize.new
-      page = agent.get(LOGIN_URL)
+      @agent = Mechanize.new
+      page = @agent.get(LOGIN_URL)
       login_form = page.form('login')
       login_form.email = login
       login_form.pass  = password
 
-      agent.submit( agent.submit(login_form, login_form.buttons.first).forms.first ) 
+      @agent.submit( @agent.submit(login_form, login_form.buttons.first).forms.first )
+    end
+    
+    def contacts
+      return @contacts if @contacts
+      @contacts = [] 
 
       names = {}
       my_friends = []
       people = {}
 
-      my_friends_list = get_friends_list_from_page agent.get(ADDRESS_BOOK_URL).body
+      my_friends_list = get_friends_list_from_page @agent.get(ADDRESS_BOOK_URL).body
 
       if my_friends_list == {}
         raise AuthenticationError, "Username and password do not match"
@@ -42,6 +40,26 @@ class Contacts
       end
       
       @contacts
+    end
+    
+    def send_message(user, subject, text)
+      begin
+        page = @agent.get "http://vkontakte.ru/mail.php?act=write&to=#{user[1].to_i}"
+
+        msg_form = page.form('postMessage')
+        msg_form.action  = "http://vkontakte.ru/mail.php"
+        msg_form.title   = subject
+        msg_form.message = text
+        msg_form.add_field!('ajax', '1')
+        msg_form.add_field!('misc', '')
+        msg_form.add_field!('toFriends', '')
+        msg_form.chas = "#{msg_form.chas[4..16].reverse}#{msg_form.chas[20..26].reverse}"
+
+        @agent.submit(msg_form, nil, 'X-Requested-With' => 'XMLHttpRequest')
+        return true
+      rescue
+        raise ConnectionError, PROTOCOL_ERROR
+      end
     end
     
     private
