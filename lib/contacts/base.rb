@@ -6,6 +6,7 @@ require "zlib"
 require "stringio"
 require "thread"
 require "erb"
+require "pony"
 
 class Contacts
   TYPES = {}
@@ -66,9 +67,14 @@ class Contacts
       @password
     end
     
-    def send_message(user)
-      # by default this sends email
-      # separate services can use direct messaging if available
+    def send_message(user, subject, text, params = {}, smtp_settings = {})
+      Pony.mail(
+      { :to       => user[1], 
+        :subject  => subject, 
+        :body     => text,
+        :via      => :smtp,
+        :smtp     => smtp_settings }.merge(params)
+      )
     end
     
   private
