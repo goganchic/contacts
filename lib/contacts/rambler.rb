@@ -41,7 +41,10 @@ class Contacts
         end
         doc = Hpricot(data)
         doc.at("#contacts-list").search("tr.vcard").each do |tr|
-          @contacts << [tr.at("td.fn").inner_text.blank? ? nil : tr.at("td.fn").inner_text, tr.at("a.email").inner_text]
+          email = tr.at("a.email").inner_text
+          name  = tr.at("td.fn").inner_text.blank? ? nil : tr.at("td.fn").inner_text
+          name  = email if name.strip.empty? && !email.empty?
+          @contacts << {:id => email, :name => name}
         end
         @contacts
       end

@@ -47,7 +47,10 @@ class Contacts
       data = CSV.parse(data)
       col_names = data.shift
       @contacts = data.map do |person|
-        [person[2], person[4]] unless person[4].empty?
+        email = person[4]
+        name  = person[2].to_s.strip
+        name  = email if name.empty? && !email.empty?
+        {:id => name, :name => email} unless email.empty?
       end.compact
     end
   

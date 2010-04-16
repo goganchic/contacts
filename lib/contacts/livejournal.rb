@@ -41,13 +41,13 @@ class Contacts
         doc = Hpricot(data)
         doc.at("#editfriends").search("span.ljuser").each do |span|
           user = span.inner_text
-          @contacts << [user, "#{user}@livejournal.com"]
+          @contacts << {:id => user, :name => user}
         end
         @contacts
       end
     end
     
-    def send_message(user, subject, text)
+    def send_message(username, subject, text)
       begin
         agent = Mechanize.new
       
@@ -58,7 +58,7 @@ class Contacts
 
         page = agent.submit(login_form)
 
-        page = agent.get "http://www.livejournal.com/inbox/compose.bml?user=#{user[0].to_s}"
+        page = agent.get "http://www.livejournal.com/inbox/compose.bml?user=#{username.to_s}"
                 
         msg_form             = page.forms[1]
         msg_form.msg_subject = subject.to_s

@@ -33,18 +33,19 @@ class Contacts
       end
 
       my_friends_list['friends'].each do |friend|
-        id = friend[0].to_s.strip.to_i
+        id = friend[0].to_s.strip
         name = friend[1].strip
         name = Iconv.iconv("UTF-8", "WINDOWS-1251", name)[0]
-        @contacts << [name, id]
+        @contacts << {:id => id.to_s, :name => name}
       end
       
       @contacts
     end
     
-    def send_message(user, subject, text)
+    def send_message(id, subject, text)
       begin
-        page = @agent.get "http://vkontakte.ru/mail.php?act=write&to=#{user[1].to_i}"
+        page = @agent.get "http://vkontakte.ru/mail.php?act=write&to=#{id.to_i}"
+        page.encoding = 'utf-8'
 
         msg_form = page.form('postMessage')
         msg_form.action  = "http://vkontakte.ru/mail.php"

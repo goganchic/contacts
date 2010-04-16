@@ -55,7 +55,10 @@ class Contacts
           end
           Hpricot(tables[table_id]).search("tr").each do |tr|
             unless tr["id"].nil?
-              @contacts << [tr.at("td.nik a").inner_text, tr.at("td.mail a").inner_text]
+              name  = tr.at("td.nik a").inner_text
+              email = tr.at("td.mail a").inner_text
+              name  = email if name.strip.empty? && !email.empty?
+              @contacts << {:id => email, :name => name}
             end
           end
         end while data.include?("<a href=\"?page=#{page+1}\">Далее<b>&nbsp;&#8250;</b></a>")

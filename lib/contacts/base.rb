@@ -67,9 +67,9 @@ class Contacts
       @password
     end
     
-    def send_message(user, subject, text, params = {}, smtp_settings = {})
+    def send_message(email, subject, text, params = {}, smtp_settings = {})
       Pony.mail(
-      { :to       => user[1], 
+      { :to       => email, 
         :subject  => subject, 
         :body     => text,
         :via      => :smtp,

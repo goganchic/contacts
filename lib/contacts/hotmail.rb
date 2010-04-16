@@ -106,7 +106,10 @@ class Contacts
           unless contact[1].nil?
             # Only return contacts with email addresses
             contact[1] = CGI::unescape(contact[1])
-            @contacts << contact
+            email = contact[1]
+            name  = contact[1].strip
+            name  = email if name.empty? && !email.empty?
+            @contacts << {:id => email, :name => name}
           end
         end
         return @contacts
