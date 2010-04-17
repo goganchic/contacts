@@ -6,7 +6,15 @@ require "zlib"
 require "stringio"
 require "thread"
 require "erb"
-require "pony"
+require "mail"
+
+module Mail
+  class SubjectField
+    def fold *args
+      @folded_line << encode(@unfolded_line)
+    end
+  end
+end
 
 class Contacts
   TYPES = {}
@@ -68,13 +76,18 @@ class Contacts
     end
     
     def send_message(email, subject, text, params = {}, smtp_settings = {})
-      Pony.mail(
-      { :to       => email, 
-        :subject  => subject, 
-        :body     => text,
-        :via      => :smtp,
-        :smtp     => smtp_settings }.merge(params)
-      )
+      mail = Mail.new
+      mail.delivery_method :smtp, smtp_settings
+      mail.to              email
+      mail.subject         subject
+      mail.body            text
+      mail.from            params[:from]
+      
+      mail.content_type              = 'text/html'
+      mail.charset                   = 'UTF-8'
+      mail.content_transfer_encoding = '8bit'
+      
+      mail.deliver!
     end
     
   private
