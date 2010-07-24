@@ -52,7 +52,7 @@ class Contacts
         agent = Mechanize.new
       
         page = agent.get "http://livejournal.com"
-        login_form          = page.forms[2]
+        login_form          = page.forms[4]
         login_form.user     = login.split('@')[0].to_s
         login_form.password = password.to_s
 
