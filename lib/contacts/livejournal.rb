@@ -28,8 +28,7 @@ class Contacts
       @cookies = cookies
     end
     
-    def contacts       
-      return @contacts if @contacts
+    def contacts
       @contacts = []
       if connected?
         url = URI.parse(address_book_url)
@@ -45,6 +44,9 @@ class Contacts
         end
         @contacts
       end
+      
+      @contacts.sort! { |a,b| a[:name] <=> b[:name] } if @contacts
+      return @contacts if @contacts
     end
     
     def send_message(username, subject, text)

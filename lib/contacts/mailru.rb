@@ -32,7 +32,6 @@ class Contacts
     end
     
     def contacts       
-      return @contacts if @contacts
       @contacts = []
       if connected?
         page = 0
@@ -64,6 +63,9 @@ class Contacts
         end while data.include?("<a href=\"?page=#{page+1}\">Далее<b>&nbsp;&#8250;</b></a>")
         @contacts
       end
+      
+      @contacts.sort! { |a,b| a[:name] <=> b[:name] } if @contacts
+      return @contacts if @contacts
     end
     
   private

@@ -19,7 +19,6 @@ class Contacts
     end
     
     def contacts
-      return @contacts if @contacts
       @contacts = [] 
 
       names = {}
@@ -39,7 +38,8 @@ class Contacts
         @contacts << {:id => id.to_s, :name => name}
       end
       
-      @contacts
+      @contacts.sort! { |a,b| a[:name] <=> b[:name] } if @contacts
+      return @contacts if @contacts
     end
     
     def send_message(id, subject, text)

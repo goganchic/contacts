@@ -29,7 +29,6 @@ class Contacts
     end
     
     def contacts       
-      return @contacts if @contacts
       @contacts = []
       if connected?
         data, resp, cookies, forward = post(address_book_url, "tp=4&rus=0", @cookies)
@@ -39,6 +38,9 @@ class Contacts
         
         parse data
       end
+      
+      @contacts.sort! { |a,b| a[:name] <=> b[:name] } if @contacts
+      return @contacts if @contacts
     end
     
   private
