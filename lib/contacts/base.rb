@@ -27,12 +27,15 @@ class Contacts
       @captcha_token = options[:captcha_token]
       @captcha_response = options[:captcha_response]
       @connections = {}
+      @skip_login = options[:skip_login]
       connect
     end
     
     def connect
-      raise AuthenticationError, "Login and password must not be nil, login: #{@login.inspect}, password: #{@password.inspect}" if @login.nil? || @login.empty? || @password.nil? || @password.empty?
-      real_connect
+      unless @skip_login
+        raise AuthenticationError, "Login and password must not be nil, login: #{@login.inspect}, password: #{@password.inspect}" if @login.nil? || @login.empty? || @password.nil? || @password.empty?
+        real_connect
+      end
     end
     
     def connected?
