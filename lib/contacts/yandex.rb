@@ -52,7 +52,7 @@ class Contacts
         email = person[4]
         name  = person[2].to_s.strip
         name  = email if name.empty? && !email.empty?
-        {:id => name, :name => email} unless email.empty?
+        {:id => email, :name => name} unless email.empty?
       end.compact
     end
   
