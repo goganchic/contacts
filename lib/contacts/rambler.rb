@@ -40,10 +40,11 @@ class Contacts
           raise ConnectionError, self.class.const_get(:PROTOCOL_ERROR)
         end
         doc = Hpricot(data)
-        doc.at("#contacts-list").search("tr.vcard").each do |tr|
-          email = tr.at("a.email").inner_text
-          name  = tr.at("td.fn").inner_text.blank? ? nil : tr.at("td.fn").inner_text
-          name  = email if name.strip.empty? && !email.empty?
+
+        doc.at("#mailbox-list").search("tbody tr").each do |tr|
+          email = tr.at("td.mtbox-email").inner_text.strip
+          name = tr.at("td.mtbox-name").inner_text.strip
+          name = email if name.blank?
           @contacts << {:id => email, :name => name}
         end
         @contacts
