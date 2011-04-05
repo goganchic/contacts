@@ -22,11 +22,8 @@ class Contacts
         entry.elements.each('gd:email') do |e|
           email = e.attribute('address').value if e.attribute('primary')
         end
-        name = title.nil? ? '' : title
-        unless email.nil?
-          name = email if name.empty? && !email.empty?
-          {:id => email, :name => name} unless email.empty?
-        end
+        title = email unless title
+        {:name => title, :id => email} unless email.nil?
       end
       @contacts.compact!
     rescue GData::Client::AuthorizationError => e
