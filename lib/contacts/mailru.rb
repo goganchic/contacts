@@ -5,7 +5,7 @@ class Contacts
   class Mailru < Base
     URL                 = "http://mail.ru/"
     LOGIN_URL           = "http://win.mail.ru/cgi-bin/auth"
-    ADDRESS_BOOK_URL    = "http://win.mail.ru/cgi-bin/addressbook?viewmode=l"
+    ADDRESS_BOOK_URL    = "http://e.mail.ru/cgi-bin/addressbook?viewmode=l"
     PROTOCOL_ERROR      = "Mail.ru has changed its protocols, please upgrade this library first."
     
     def real_connect
@@ -16,7 +16,6 @@ class Contacts
       until forward.nil?
         data, resp, cookies, forward, old_url = get(forward, cookies, old_url) + [forward]
       end
-      data = Iconv.iconv("UTF-8", "WINDOWS-1251", data)[0]
       
       if data.index("Неверное имя пользователя или пароль") || data.index("Недопустимое имя пользователя")
         raise AuthenticationError, "Username and password do not match"
@@ -45,7 +44,6 @@ class Contacts
           if resp.code_type != Net::HTTPOK
             raise ConnectionError, self.class.const_get(:PROTOCOL_ERROR)
           end
-          data = Iconv.iconv("UTF-8", "WINDOWS-1251", data)[0]
           doc = Hpricot(data)
           tables = data.gsub(/\n/, "").gsub(/\r/, "").gsub(/<script(.*?)<\/script>/, "").scan(/<table.*?<\/table>/m)
           table_id = 1
